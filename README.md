@@ -1,5 +1,7 @@
 # Agent Receipt Ledger — Scaffold-HBAR template
 
+[![Template Gate](https://github.com/williamleewilliam1-star/hedera-agent-receipt-ledger/actions/workflows/lint.yaml/badge.svg)](https://github.com/williamleewilliam1-star/hedera-agent-receipt-ledger/actions/workflows/lint.yaml)
+
 Agent Receipt Ledger is a reusable Scaffold-HBAR template for producing independently verifiable receipts for AI-agent work.
 
 It turns an arbitrary JSON artifact into a deterministic SHA-256 digest, publishes a compact receipt envelope to Hedera Consensus Service (HCS), and verifies the exact consensus message through a public Hedera Mirror Node. An optional Solidity registry can bind the HCS sequence and artifact digest to the service provider address on Hedera EVM.

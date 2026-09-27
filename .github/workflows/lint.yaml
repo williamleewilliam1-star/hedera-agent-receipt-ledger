@@ -1,4 +1,4 @@
-name: Lint
+name: Template Gate
 
 on:
   push:
@@ -9,40 +9,37 @@ on:
       - main
 
 jobs:
-  ci:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [lts/*]
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Setup node env
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20.18.3
           cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install from lockfile
+        run: npm ci
 
-      - name: Run Hardhat node and deploy contracts
-        run: |
-          npm run hardhat:chain &
-          timeout 60s bash -c 'until curl -s -X POST http://127.0.0.1:8545 -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"web3_clientVersion\",\"params\":[],\"id\":1}" >/dev/null; do sleep 2; done'
-          npm run hardhat:deploy --network localhost
+      - name: Lint
+        run: npm run lint
 
-      - name: Run nextjs lint
-        run: npm run next:lint --max-warnings=0
+      - name: Compile Solidity
+        run: npm run hardhat:compile
 
-      - name: Check typings on nextjs
+      - name: Test AgentReceiptRegistry
+        run: npm run hardhat:test
+
+      - name: Typecheck Next.js
         run: npm run next:check-types
 
-      - name: Run hardhat lint
-        run: npm run hardhat:lint --max-warnings=0
+      - name: Build production app
+        run: npm run next:build
+
+      - name: Ensure tracked tree stays clean
+        run: git diff --exit-code
