@@ -3,11 +3,11 @@ import type { DeployFunction } from "hardhat-deploy/types";
 
 import { getDeployGasPrice } from "../utils/getDeployGasPrice";
 
-const deployHtsTokenCreator: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const deployAgentReceiptRegistry: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("HtsTokenCreator", {
+  await deploy("AgentReceiptRegistry", {
     from: deployer,
     args: [],
     log: true,
@@ -17,6 +17,5 @@ const deployHtsTokenCreator: DeployFunction = async function (hre: HardhatRuntim
   });
 };
 
-deployHtsTokenCreator.tags = ["HtsTokenCreator"];
-deployHtsTokenCreator.dependencies = ["HederaToken"];
-export default deployHtsTokenCreator;
+deployAgentReceiptRegistry.tags = ["AgentReceiptRegistry"];
+export default deployAgentReceiptRegistry;

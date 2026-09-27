@@ -1,0 +1,57 @@
+{
+  "name": "agent-receipt-ledger",
+  "description": "Verifiable AI-agent work receipts: canonical artifact digests anchored to Hedera Consensus Service with independent Mirror Node verification and an optional Solidity registry.",
+  "create-scaffold-hbar": {
+    "capabilities": {
+      "frontend": [
+        "nextjs-app"
+      ],
+      "solidityFramework": [
+        "hardhat"
+      ],
+      "packageManager": [
+        "npm"
+      ]
+    },
+    "defaults": {
+      "frontend": "nextjs-app",
+      "solidityFramework": "hardhat",
+      "packageManager": "npm"
+    },
+    "outro": {
+      "sections": [
+        {
+          "steps": [
+            {
+              "text": "Agent Receipt Ledger: deterministic artifact digests + HCS consensus receipts + independent Mirror Node verification."
+            }
+          ]
+        },
+        {
+          "title": "Next steps",
+          "steps": [
+            {
+              "label": "Copy environment file",
+              "command": "cp packages/nextjs/.env.example packages/nextjs/.env"
+            },
+            {
+              "label": "Fund a Hedera testnet operator",
+              "url": "https://portal.hedera.com/faucet"
+            },
+            {
+              "text": "Start the app, then use the Agent Receipt Ledger UI to create or select an HCS topic and publish the first receipt."
+            },
+            {
+              "label": "Deploy ReceiptRegistry",
+              "command": "{run:hardhat:deploy} --network hederaTestnet"
+            },
+            {
+              "label": "Start the app",
+              "command": "{run:next:dev}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
