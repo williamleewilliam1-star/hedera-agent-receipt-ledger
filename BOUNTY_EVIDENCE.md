@@ -218,3 +218,13 @@ A second end-to-end UI run verified the new first-class IPFS flow from the actua
 The CID is pinned on both the development machine and a separate always-on Kubo node on the project VPS. A fresh public gateway request returned HTTP 200 and the exact canonical JSON bytes, so the IPFS reference in HCS is publicly retrievable rather than a local-only placeholder.
 
 The public demo video at `demo/hedera-demo.mp4` was refreshed after this proof. It now shows the live IPFS-enabled UI, the successful HCS receipt, and an updated final proof card for sequence #4.
+
+## Registration confirmation — 2026-10-01
+
+The separate Hedera Scaffold-HBAR Template Bounty registration step is now complete.
+
+- registration form fields were submitted with the public repository URL and participant identity;
+- the required Hedera communications consent checkbox was explicitly approved by the participant before submission;
+- the official page returned **"Thanks — your submission has been received."**
+
+At this point both the separate registration step and the project submission form have been completed.
