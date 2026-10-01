@@ -11,6 +11,8 @@ export async function GET() {
     writeConfigured: config.configured,
     topicConfigured: Boolean(config.topicId),
     topicId: config.topicId,
+    ipfsConfigured: Boolean(process.env.IPFS_API_URL?.trim()),
+    ipfsGatewayUrl: process.env.IPFS_GATEWAY_URL || "https://ipfs.io/ipfs",
     mirrorUrl: process.env.NEXT_PUBLIC_HEDERA_MIRROR_URL || `https://${config.network}.mirrornode.hedera.com`,
     note: config.configured
       ? "HCS writes are configured on the server."

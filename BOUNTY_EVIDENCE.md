@@ -179,3 +179,23 @@ The final live HCS evidence step is now complete.
 - HashScan transaction: https://hashscan.io/testnet/transaction/0.0.10801914%401790824878.058526740
 
 No operator private key or wallet secret is committed to this repository.
+
+## Load-bearing IPFS + HCS integration proof — 2026-10-01
+
+The receipt flow now exposes **Store on IPFS** as a first-class step. The canonical JSON bytes are pinned through the configured Kubo/IPFS API, the returned `ipfs://CID` is written into the receipt, and that exact receipt is then published to HCS.
+
+Live end-to-end UI run:
+
+- IPFS CID: `bafkreicqhlgl7lxq7upljqh7fiaah4og6qfsirxu33lq5mrrc76zbllemm`;
+- canonical artifact SHA-256: `503accbfaef0fd1eb4c0ff2a0003f1c6f40b2446f4ded70eb23117fd90ad6463`;
+- receipt ID: `70888a982a4460a4b09c09c39b08f381f998dc4920712264d2fd26c0ea6820c1`;
+- HCS message SHA-256: `172284c529fa8b3547826ff355c0f20cc1315ddffc9726dfa451b5485b9a8eb0`;
+- HCS topic: `0.0.10801973`;
+- HCS sequence: `3`;
+- transaction ID: `0.0.10801914@1790827213.569399160`;
+- Mirror consensus timestamp: `1790827222.149064104`;
+- Mirror proof: https://testnet.mirrornode.hedera.com/api/v1/topics/0.0.10801973/messages/3
+- HashScan topic: https://hashscan.io/testnet/topic/0.0.10801973
+- HashScan transaction: https://hashscan.io/testnet/transaction/0.0.10801914%401790827213.569399160
+
+The Mirror payload itself contains the IPFS URI and the same artifact digest, so the off-chain storage reference is consensus-bound rather than decorative. No IPFS or Hedera private key is committed.

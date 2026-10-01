@@ -1,6 +1,6 @@
 {
   "name": "agent-receipt-ledger",
-  "description": "Verifiable AI-agent work receipts: canonical artifact digests anchored to Hedera Consensus Service with independent Mirror Node verification and an optional Solidity registry.",
+  "description": "Verifiable AI-agent work receipts: canonical artifacts optionally pinned to IPFS, digests anchored to Hedera Consensus Service, independent Mirror Node verification, and an optional Solidity registry.",
   "create-scaffold-hbar": {
     "capabilities": {
       "frontend": [

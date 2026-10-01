@@ -7,6 +7,8 @@ type RuntimeStatus = {
   writeConfigured: boolean;
   topicConfigured: boolean;
   topicId: string | null;
+  ipfsConfigured: boolean;
+  ipfsGatewayUrl: string;
   mirrorUrl: string;
   note: string;
 };
@@ -18,6 +20,15 @@ type ReceiptResult = {
   canonicalArtifact?: string;
   hcs?: { topicId: string; sequenceNumber: string; transactionId: string; status: string };
   proof?: { topic: string; transaction: string; mirror: string };
+  error?: string;
+};
+
+type StoredArtifact = {
+  cid?: string;
+  size?: number;
+  sha256?: string;
+  artifactUri?: string;
+  gatewayUrl?: string;
   error?: string;
 };
 
@@ -34,6 +45,7 @@ export default function Home() {
   const [artifactText, setArtifactText] = useState(SAMPLE_ARTIFACT);
   const [topicId, setTopicId] = useState("");
   const [result, setResult] = useState<ReceiptResult | null>(null);
+  const [storage, setStorage] = useState<StoredArtifact | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -83,6 +95,29 @@ export default function Home() {
       setResult({ error: error instanceof Error ? error.message : "Artifact JSON is invalid" });
     }
   }
+  async function storeArtifact() {
+    setBusy(true);
+    setStorage(null);
+    try {
+      const artifact = JSON.parse(artifactText);
+      const response = await fetch("/api/receipts/store", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ artifact }),
+      });
+      const data = (await response.json()) as StoredArtifact;
+      if (!response.ok || !data.cid || !data.artifactUri) {
+        throw new Error(data.error || "IPFS storage failed");
+      }
+      setArtifactUri(data.artifactUri);
+      setStorage(data);
+    } catch (error) {
+      setStorage({ error: error instanceof Error ? error.message : "IPFS storage failed" });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function createTopic() {
     const data = await call("/api/receipts/topic", { memo: "Agent Receipt Ledger" });
     const createdTopic = (data as ReceiptResult & { topicId?: string }).topicId;
@@ -151,6 +186,9 @@ export default function Home() {
                 <button className="btn btn-primary" onClick={preview} disabled={busy}>
                   Preview digest
                 </button>
+                <button className="btn btn-outline" onClick={storeArtifact} disabled={busy || !runtime?.ipfsConfigured}>
+                  Store on IPFS
+                </button>
                 <button className="btn btn-secondary" onClick={publish} disabled={busy || !runtime?.writeConfigured}>
                   Publish to HCS
                 </button>
@@ -166,6 +204,9 @@ export default function Home() {
                   <span className="badge badge-lg">{runtime?.network || "loading"}</span>
                   <span className={`badge badge-lg ${runtime?.writeConfigured ? "badge-success" : "badge-warning"}`}>
                     {runtime?.writeConfigured ? "HCS writes configured" : "read-only mode"}
+                  </span>
+                  <span className={`badge badge-lg ${runtime?.ipfsConfigured ? "badge-success" : "badge-ghost"}`}>
+                    {runtime?.ipfsConfigured ? "IPFS storage configured" : "IPFS optional"}
                   </span>
                 </div>
                 <p className="text-sm text-base-content/70">{runtime?.note || "Loading runtime status…"}</p>
@@ -190,8 +231,24 @@ export default function Home() {
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">3. Proof</h2>
-                {!result ? (
-                  <p className="text-sm text-base-content/60">Preview or publish a receipt to see its proof.</p>
+                {!result && !storage ? (
+                  <p className="text-sm text-base-content/60">Preview, store, or publish a receipt to see its proof.</p>
+                ) : null}
+                {storage?.error ? <div className="alert alert-error text-sm">{storage.error}</div> : null}
+                {storage?.cid ? (
+                  <div className="alert alert-info mb-3 block text-sm">
+                    <div>
+                      IPFS CID <code className="break-all text-xs">{storage.cid}</code>
+                    </div>
+                    <div className="mt-1">
+                      {storage.size} bytes · SHA-256 <code className="break-all text-xs">{storage.sha256}</code>
+                    </div>
+                    {storage.gatewayUrl ? (
+                      <a className="link mt-1 inline-block" href={storage.gatewayUrl} target="_blank" rel="noreferrer">
+                        Open stored artifact
+                      </a>
+                    ) : null}
+                  </div>
                 ) : null}
                 {result?.error ? <div className="alert alert-error text-sm">{result.error}</div> : null}
                 {result?.artifactDigest ? (

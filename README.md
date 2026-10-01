@@ -33,7 +33,8 @@ compact receipt envelope -> HCS topic
       v
 optional AgentReceiptRegistry on Hedera EVM
 ```
-The HCS envelope is deliberately small. Large artifacts stay off-chain; the receipt stores their digest and an optional URI such as `ipfs://...` or an HTTPS evidence URL.
+
+The HCS envelope is deliberately small. Large artifacts stay off-chain; the receipt stores their digest and an optional URI such as `ipfs://...` or an HTTPS evidence URL. When IPFS is configured, the UI can canonicalize and pin the artifact first, then carry the returned `ipfs://CID` into the HCS receipt.
 
 ## What is included
 
@@ -41,7 +42,7 @@ The HCS envelope is deliberately small. Large artifacts stay off-chain; the rece
 - Server routes for deterministic preview, HCS topic creation, HCS publishing, and Mirror Node verification.
 - `@hiero-ledger/sdk` integration for HCS writes.
 - Canonical JSON serializer and SHA-256 hashing.
-- Optional IPFS adapter for artifact storage.
+- Load-bearing IPFS storage route and UI flow backed by the operator-configured Kubo/IPFS API.
 - `AgentReceiptRegistry.sol` with Hardhat deploy script and tests.
 - Hedera testnet/mainnet and Mirror Node configuration.
 - `template.json` for external Scaffold-HBAR use.
@@ -52,8 +53,9 @@ The HCS envelope is deliberately small. Large artifacts stay off-chain; the rece
 - npm.
 - Git.
 - A funded Hedera testnet operator only when you want to create a topic or publish a real HCS receipt.
+- An IPFS/Kubo API only when you want to pin the canonical artifact and embed an `ipfs://CID` in the receipt.
 
-Preview hashing and Mirror Node reads do not need a private key.
+Preview hashing and Mirror Node reads do not need a private key. IPFS storage never needs the Hedera private key.
 
 ## Install
 
@@ -64,6 +66,7 @@ npm run hardhat:test
 npm run next:check-types
 npm run next:build
 ```
+
 Start the frontend:
 
 ```bash
@@ -84,16 +87,19 @@ cp packages/nextjs/.env.example packages/nextjs/.env
 
 The server reads these variables:
 
-| Variable | Purpose |
-| --- | --- |
-| `HEDERA_OPERATOR_ID` | Hedera account that pays for HCS transactions |
-| `HEDERA_OPERATOR_KEY` | Private key for that operator; never commit it |
-| `HEDERA_RECEIPT_TOPIC_ID` | Existing receipt topic; optional if you create one from the app |
-| `HEDERA_NETWORK` | `testnet` or `mainnet` |
-| `NEXT_PUBLIC_HEDERA_MIRROR_URL` | Mirror Node base URL |
-| `NEXT_PUBLIC_RECEIPT_REGISTRY_ADDRESS` | Optional deployed registry contract |
+| Variable                               | Purpose                                                         |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `HEDERA_OPERATOR_ID`                   | Hedera account that pays for HCS transactions                   |
+| `HEDERA_OPERATOR_KEY`                  | Private key for that operator; never commit it                  |
+| `HEDERA_RECEIPT_TOPIC_ID`              | Existing receipt topic; optional if you create one from the app |
+| `HEDERA_NETWORK`                       | `testnet` or `mainnet`                                          |
+| `IPFS_API_URL`                         | Kubo/IPFS RPC API, for example `http://127.0.0.1:5001`          |
+| `IPFS_GATEWAY_URL`                     | Read gateway used for the returned CID link                     |
+| `NEXT_PUBLIC_HEDERA_MIRROR_URL`        | Mirror Node base URL                                            |
+| `NEXT_PUBLIC_RECEIPT_REGISTRY_ADDRESS` | Optional deployed registry contract                             |
 
-The UI enables HCS write buttons only when the server sees operator credentials.
+The UI enables HCS write buttons only when the server sees operator credentials, and enables **Store on IPFS** only when `IPFS_API_URL` is configured.
+
 ## Receipt flow
 
 ### 1. Preview
@@ -109,21 +115,34 @@ The UI enables HCS write buttons only when the server sees operator credentials.
 
 The same JSON value always produces the same artifact digest even when object keys arrive in a different order.
 
-### 2. Create an HCS topic
+### 2. Store the canonical artifact on IPFS
+
+`POST /api/receipts/store` canonicalizes the submitted JSON with the same serializer used by the receipt builder, pins that exact byte sequence through the configured Kubo/IPFS API, and returns:
+
+- CIDv1;
+- canonical-artifact SHA-256;
+- byte size;
+- `ipfs://CID` for the receipt;
+- a configured gateway URL for independent retrieval.
+
+The UI writes the returned `ipfs://CID` into **Artifact URI**, so the later HCS receipt binds the consensus record to the off-chain artifact location without putting the full artifact on Hedera.
+
+### 3. Create an HCS topic
 
 `POST /api/receipts/topic` creates a public HCS topic when operator credentials are configured.
 
 The response includes the Hedera transaction ID and new topic ID.
 
-### 3. Publish
+### 4. Publish
 
 `POST /api/receipts/submit` rebuilds the digest server-side and publishes only the compact receipt envelope. It returns the HCS sequence number, running hash, transaction ID, Hashscan links, and a local Mirror verification URL.
 
-### 4. Verify independently
+### 5. Verify independently
 
 `GET /api/receipts/verify?topicId=...&sequence=...&network=testnet` reads the message from the public Mirror Node and computes the message digest again.
 
 The verifier does not trust the application server that submitted the receipt.
+
 ## Optional Solidity registry
 
 `packages/hardhat/contracts/AgentReceiptRegistry.sol` lets a provider:
@@ -154,6 +173,7 @@ Deploy through the standard Scaffold-HBAR Hardhat workflow after importing or ge
 - The optional IPFS adapter talks only to the operator-configured IPFS API.
 
 ## Template eligibility self-check
+
 Before submission, verify all of the following from a fresh clone:
 
 ```bash
