@@ -7,6 +7,7 @@
     "check-types": "tsc --noEmit --incremental",
     "dev": "next dev",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
+    "hcs:proof": "node scripts/hcs-bounty-proof.mjs",
     "lint": "next lint",
     "serve": "next start",
     "start": "next dev"

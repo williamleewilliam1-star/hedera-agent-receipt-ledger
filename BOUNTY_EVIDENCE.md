@@ -131,3 +131,21 @@ Observed results:
 - `git diff --check`: PASS.
 
 This refresh changes no product behavior and does not substitute for the outstanding Hedera testnet HCS proof. The only eligibility item still marked PENDING is the explicitly authorized real testnet write described above.
+
+## One-command HCS proof helper
+
+`packages/nextjs/scripts/hcs-bounty-proof.mjs` now packages the remaining testnet evidence step without printing or persisting the operator private key. It:
+
+1. builds the same canonical receipt-envelope shape used by the app;
+2. creates a fresh HCS topic;
+3. submits the receipt message;
+4. waits for the matching Mirror Node sequence to appear;
+5. prints only public proof material: topic ID, sequence, transaction ID, digests, Mirror URL and HashScan URLs.
+
+Safe preflight:
+
+```bash
+npm run hcs:proof -w @sh/nextjs -- --dry-run
+```
+
+The 2026-10-01 dry run produced a 365-byte envelope and deterministic artifact, receipt and message SHA-256 digests. The live command remains intentionally blocked until real Hedera operator credentials are configured locally.
