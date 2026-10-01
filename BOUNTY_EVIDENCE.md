@@ -149,3 +149,12 @@ npm run hcs:proof -w @sh/nextjs -- --dry-run
 ```
 
 The 2026-10-01 dry run produced a 365-byte envelope and deterministic artifact, receipt and message SHA-256 digests. The live command remains intentionally blocked until real Hedera operator credentials are configured locally.
+
+## Submission status — 2026-10-01
+
+- Hedera mainnet payout account created in HashPack: `0.0.10898341`.
+- Short public demo video: https://raw.githubusercontent.com/williamleewilliam1-star/hedera-agent-receipt-ledger/main/demo/hedera-demo.mp4
+- Official Scaffold HBAR Template bounty Google Form returned **"Your response has been recorded"** on 2026-10-01.
+- The public repository, demo video, and this evidence page were included in the submission.
+- A separate locally generated ECDSA testnet operator is prepared for the final live HCS evidence; its private key is stored outside the repository and is not printed or committed.
+- Final faucet disbursement is currently pending the official Hedera Portal reCAPTCHA; once funded, the one-command proof helper will create a topic, publish the receipt, and record Mirror Node/HashScan evidence here.
