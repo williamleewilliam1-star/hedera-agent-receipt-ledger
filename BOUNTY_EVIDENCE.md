@@ -105,3 +105,29 @@ GitHub Actions workflow `.github/workflows/lint.yaml` runs the Template Gate on 
 - Next.js typecheck;
 - production build;
 - clean tracked-tree check.
+
+## Fresh pre-submission validation — 2026-10-01 UTC
+
+The full local gate was rerun from the public repository before submission work:
+
+```bash
+npm ci --legacy-peer-deps --no-audit --no-fund
+npm run lint
+npm run hardhat:compile
+npm run hardhat:test
+npm run next:check-types
+npm run next:build
+git diff --check
+```
+
+Observed results:
+
+- dependency install: PASS (`1656` packages installed);
+- Next.js + Hardhat lint: PASS, zero ESLint warnings/errors;
+- Solidity `0.8.28` compile: PASS;
+- `AgentReceiptRegistry` tests: **2/2 PASS** on Hedera fork;
+- Next.js TypeScript check: PASS;
+- Next.js `15.5.26` production build: PASS, 14 static pages generated;
+- `git diff --check`: PASS.
+
+This refresh changes no product behavior and does not substitute for the outstanding Hedera testnet HCS proof. The only eligibility item still marked PENDING is the explicitly authorized real testnet write described above.
