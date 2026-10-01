@@ -158,3 +158,24 @@ The 2026-10-01 dry run produced a 365-byte envelope and deterministic artifact, 
 - The public repository, demo video, and this evidence page were included in the submission.
 - A separate locally generated ECDSA testnet operator is prepared for the final live HCS evidence; its private key is stored outside the repository and is not printed or committed.
 - Final faucet disbursement is currently pending the official Hedera Portal reCAPTCHA; once funded, the one-command proof helper will create a topic, publish the receipt, and record Mirror Node/HashScan evidence here.
+
+## Live Hedera testnet proof — 2026-10-01
+
+The final live HCS evidence step is now complete.
+
+- funded testnet operator account: `0.0.10801914`;
+- public EVM alias: `0x07f2371ad144b662c0a0566658a58bff2b4f6dfd`;
+- HCS topic: `0.0.10801973`;
+- HCS sequence: `1`;
+- transaction ID: `0.0.10801914@1790824878.058526740`;
+- artifact SHA-256: `18ba5b96b3d48f4e01630aff02c95bd8d47df1726e59e9b130d6b6b82e67bf15`;
+- receipt ID: `1f3f3a62570ad4d65e9e072767abeb173d5af1fd16fcc7a17571bd66a7c08df4`;
+- HCS message SHA-256: `82ffd29eb6ec0cc2c3e3d0faaeec24446eec6647d43d0ee882f75b567c1a560c`;
+- envelope size: `365` bytes;
+- Mirror Node confirmation: **true**;
+- Mirror consensus timestamp: `1790824885.539382165`;
+- public Mirror proof: https://testnet.mirrornode.hedera.com/api/v1/topics/0.0.10801973/messages?sequencenumber=eq:1
+- HashScan topic: https://hashscan.io/testnet/topic/0.0.10801973
+- HashScan transaction: https://hashscan.io/testnet/transaction/0.0.10801914%401790824878.058526740
+
+No operator private key or wallet secret is committed to this repository.
