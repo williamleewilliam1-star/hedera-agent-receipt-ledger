@@ -35,6 +35,9 @@
               "command": "cp packages/nextjs/.env.example packages/nextjs/.env"
             },
             {
+              "text": "Optional IPFS storage: set IPFS_API_URL to a Kubo-compatible RPC endpoint to enable Store on IPFS."
+            },
+            {
               "label": "Fund a Hedera testnet operator",
               "url": "https://portal.hedera.com/faucet"
             },
