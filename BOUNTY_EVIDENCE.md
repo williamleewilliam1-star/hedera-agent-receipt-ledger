@@ -199,3 +199,22 @@ Live end-to-end UI run:
 - HashScan transaction: https://hashscan.io/testnet/transaction/0.0.10801914%401790827213.569399160
 
 The Mirror payload itself contains the IPFS URI and the same artifact digest, so the off-chain storage reference is consensus-bound rather than decorative. No IPFS or Hedera private key is committed.
+
+## Final UI + redundant IPFS proof — 2026-10-01
+
+A second end-to-end UI run verified the new first-class IPFS flow from the actual application:
+
+- canonical artifact CID: `bafkreicqhlgl7lxq7upljqh7fiaah4og6qfsirxu33lq5mrrc76zbllemm`;
+- canonical artifact SHA-256: `503accbfaef0fd1eb4c0ff2a0003f1c6f40b2446f4ded70eb23117fd90ad6463`;
+- HCS topic: `0.0.10801973`;
+- HCS sequence: `4`;
+- transaction ID: `0.0.10801914@1790829403.974438934`;
+- HCS message SHA-256: `172284c529fa8b3547826ff355c0f20cc1315ddffc9726dfa451b5485b9a8eb0`;
+- Mirror consensus timestamp: `1790829411.011357104`;
+- Mirror proof: https://testnet.mirrornode.hedera.com/api/v1/topics/0.0.10801973/messages/4
+- HashScan transaction: https://hashscan.io/testnet/transaction/0.0.10801914%401790829403.974438934
+- public raw IPFS retrieval: https://ipfs.io/ipfs/bafkreicqhlgl7lxq7upljqh7fiaah4og6qfsirxu33lq5mrrc76zbllemm?format=raw
+
+The CID is pinned on both the development machine and a separate always-on Kubo node on the project VPS. A fresh public gateway request returned HTTP 200 and the exact canonical JSON bytes, so the IPFS reference in HCS is publicly retrievable rather than a local-only placeholder.
+
+The public demo video at `demo/hedera-demo.mp4` was refreshed after this proof. It now shows the live IPFS-enabled UI, the successful HCS receipt, and an updated final proof card for sequence #4.
